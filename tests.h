@@ -119,4 +119,21 @@ void tests()
     {
         assert((filteredTree2.LeftRootRight())[i] == CorrectFilteredTree2[i]);
     }
+
+    // merge test
+    BinaryTree<int> tree1;
+    tree1.insert(5);
+    tree1.insert(3);
+    tree1.insert(7);
+
+    BinaryTree<int> tree2;
+    tree2.insert(1);
+    tree2.insert(4);
+    tree2.insert(6);
+    tree1.merge(tree2);
+    int CorrectMergeTree[6] = {1, 3, 4, 5, 6, 7};
+    for (int i = 0; i < 6; i++)
+    {
+        assert((tree1.LeftRootRight())[i] == CorrectMergeTree[i]);
+    }
 }
