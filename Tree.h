@@ -21,7 +21,6 @@ public:
     BinaryTree();
     BinaryTree(const T &size);
     ~BinaryTree();
-    // BinaryTree(const BinaryTree<T> &tree);
 
     int GetSize();
     void insert(const T &data);
