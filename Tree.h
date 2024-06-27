@@ -19,8 +19,9 @@ private:
 
 public:
     BinaryTree();
-    BinaryTree(const T &size);
     ~BinaryTree();
+    BinaryTree(const BinaryTree &other);
+    BinaryTree(const T *values, const int &size);
 
     int GetSize();
     void insert(const T &data);
@@ -47,6 +48,20 @@ public:
     }
 
 private:
+    Node *cloneRecursive(Node *node)
+    {
+        if (node == nullptr)
+        {
+            return nullptr;
+        }
+
+        Node *newNode = new Node(node->data);
+        newNode->left = cloneRecursive(node->left);
+        newNode->right = cloneRecursive(node->right);
+
+        return newNode;
+    }
+
     void deleteTree(Node *root)
     {
         if (root != nullptr)
@@ -76,11 +91,11 @@ private:
         return root;
     }
 
-    void removeRecursive(Node &node, const T &data)
+    void removeRecursive(Node *&node, const T &data)
     {
         if (node == nullptr)
         {
-            throw std::out_of_range("No data in tree");
+            return;
         }
 
         if (data < node->data)
@@ -93,45 +108,42 @@ private:
         }
         else
         {
-            if (data < node->data)
+            if (node->left == nullptr && node->right == nullptr)
             {
-                removeRecursive(node->left, data);
+                delete node;
+                node = nullptr;
+                return;
             }
-            else if (data > node->data)
+            if (node->left == nullptr)
             {
-                removeRecursive(node->right, data);
+                Node *temp = node->right;
+                delete node;
+                node = temp;
+                return;
+            }
+            else if (node->right == nullptr)
+            {
+                Node *temp = node->left;
+                delete node;
+                node = temp;
+                return;
             }
             else
             {
-
-                if (node->left == nullptr && node->right == nullptr)
-                {
-                    delete node;
-                    node = nullptr;
-                }
-
-                if (node->left == nullptr)
-                {
-                    Node temp = node->right;
-                    delete node;
-                    node = temp;
-                }
-                else if (node->right == nullptr)
-                {
-                    Node temp = node->left;
-                    delete node;
-                    node = temp;
-                }
-
-                Node successor = node->right;
-                while (successor->left != nullptr)
-                {
-                    successor = successor->left;
-                }
+                Node *successor = findMin(node->right);
                 node->data = successor->data;
                 removeRecursive(node->right, successor->data);
             }
         }
+    }
+
+    Node *findMin(Node *node)
+    {
+        while (node->left != nullptr)
+        {
+            node = node->left;
+        }
+        return node;
     }
 
     void LeftRootRightRecursive(Node *root, T *arr, int &index)
@@ -294,6 +306,12 @@ private:
 };
 
 template <class T>
+BinaryTree<T>::BinaryTree(const BinaryTree &other)
+{
+    root = cloneRecursive(other.root);
+}
+
+template <class T>
 BinaryTree<T>::BinaryTree()
 {
     root = nullptr;
@@ -301,10 +319,14 @@ BinaryTree<T>::BinaryTree()
 }
 
 template <class T>
-BinaryTree<T>::BinaryTree(const T &size)
+BinaryTree<T>::BinaryTree(const T *values, const int &size)
 {
     root = nullptr;
-    this->size = size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        insert(values[i]);
+    }
 }
 
 template <class T>
@@ -329,7 +351,7 @@ void BinaryTree<T>::insert(const T &data)
 template <class T>
 void BinaryTree<T>::remove(const T &data)
 {
-    root = removeRecursive(root, data);
+    removeRecursive(root, data);
 }
 
 template <class T>
