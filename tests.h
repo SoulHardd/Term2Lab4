@@ -2,6 +2,7 @@
 #include "Tree.h"
 #include <cassert>
 #include "Complex.h"
+#include "TernaryTree.h"
 
 void tests()
 {
@@ -135,5 +136,74 @@ void tests()
     for (int i = 0; i < 6; i++)
     {
         assert((tree1.LeftRootRight())[i] == CorrectMergeTree[i]);
+    }
+
+    // Ternary tree tests
+    Complex Num1(1, 1), Num2(3, 5), Num3(7, 8);
+
+    TernaryTree<int> TernaryTreeInt;
+    TernaryTree<double> TernaryTreeDouble;
+    TernaryTree<Complex> TernaryTreeComplex;
+
+    TernaryTreeInt.insert(3);
+    TernaryTreeInt.insert(3);
+    TernaryTreeInt.insert(1);
+    TernaryTreeInt.insert(2);
+    TernaryTreeInt.insert(5);
+
+    TernaryTreeDouble.insert(7.8);
+    TernaryTreeDouble.insert(4);
+    TernaryTreeDouble.insert(11.2);
+    TernaryTreeDouble.insert(7.8);
+    TernaryTreeDouble.insert(28.3);
+
+    TernaryTreeComplex.insert(Num1);
+    TernaryTreeComplex.insert(Num2);
+    TernaryTreeComplex.insert(Num3);
+    TernaryTreeComplex.insert(Num2);
+    TernaryTreeComplex.insert(Num1);
+
+    // traversal test; (L - left, r - root, R - right, M - Middle)
+    int TernaryTreeIntTraversal_LrMR[5] = {1, 2, 3, 3, 5};
+    double TernaryTreeDoubleTraversal_LrMR[5] = {4, 7.8, 7.8, 11.2, 28.3};
+    Complex TernaryTreeComplexTraversal_LrMR[5] = {Num1, Num1, Num2, Num2, Num3};
+
+    for (int i = 0; i < 5; i++)
+    {
+        assert((TernaryTreeInt.LeftRootMiddleRight())[i] == TernaryTreeIntTraversal_LrMR[i]);
+        assert((TernaryTreeDouble.LeftRootMiddleRight())[i] == TernaryTreeDoubleTraversal_LrMR[i]);
+        assert((TernaryTreeComplex.LeftRootMiddleRight())[i] == TernaryTreeComplexTraversal_LrMR[i]);
+    }
+
+    // Search element test
+    assert(TernaryTreeInt.searchElement(3));
+    assert(TernaryTreeInt.searchElement(1));
+    assert(TernaryTreeInt.searchElement(5));
+    assert(!(TernaryTreeInt.searchElement(100)));
+
+    assert(TernaryTreeDouble.searchElement(7.8));
+    assert(TernaryTreeDouble.searchElement(11.2));
+    assert(!(TernaryTreeDouble.searchElement(5.55)));
+    assert(!(TernaryTreeDouble.searchElement(8.87)));
+
+    assert(TernaryTreeComplex.searchElement(Num1));
+    assert(TernaryTreeComplex.searchElement(Num3));
+    assert(TernaryTreeComplex.searchElement(Num2));
+    Complex Num4(9, 1);
+    assert(!(TernaryTreeComplex.searchElement(Num4)));
+
+    // Remove tests
+    TernaryTreeInt.remove(3);
+    TernaryTreeDouble.remove(7.8);
+    TernaryTreeComplex.remove(Num1);
+
+    int CorrectRemoveTernaryTreeInt[4] = {1, 2, 3, 5};
+    double CorrectRemoveTernaryTreeDouble[4] = {4, 7.8, 11.2, 28.3};
+    Complex CorrectRemoveTernaryTreeComplex[4] = {Num1, Num2, Num2, Num3};
+    for (int i = 0; i < 4; i++)
+    {
+        assert((TernaryTreeInt.LeftRootMiddleRight())[i] == CorrectRemoveTernaryTreeInt[i]);
+        assert((TernaryTreeDouble.LeftRootMiddleRight())[i] == CorrectRemoveTernaryTreeDouble[i]);
+        assert((TernaryTreeComplex.LeftRootMiddleRight())[i] == CorrectRemoveTernaryTreeComplex[i]);
     }
 }

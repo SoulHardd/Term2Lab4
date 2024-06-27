@@ -20,7 +20,7 @@ private:
 public:
     BinaryTree();
     ~BinaryTree();
-    BinaryTree(const BinaryTree &other);
+    BinaryTree(const BinaryTree &tree);
     BinaryTree(const T *values, const int &size);
 
     int GetSize();
@@ -35,7 +35,7 @@ public:
     T *RightLeftRoot();
 
     BinaryTree<T> where(std::function<bool(T)> condition);
-    void merge(BinaryTree<T> &otherTree);
+    void merge(BinaryTree<T> &Tree);
     BinaryTree<T> extractSubtree(const T &element);
     bool searchElement(const T &value);
 
@@ -48,7 +48,7 @@ public:
     }
 
 private:
-    Node *cloneRecursive(Node *node)
+    Node *copyRecursive(Node *node)
     {
         if (node == nullptr)
         {
@@ -56,8 +56,8 @@ private:
         }
 
         Node *newNode = new Node(node->data);
-        newNode->left = cloneRecursive(node->left);
-        newNode->right = cloneRecursive(node->right);
+        newNode->left = copyRecursive(node->left);
+        newNode->right = copyRecursive(node->right);
 
         return newNode;
     }
@@ -130,14 +130,14 @@ private:
             }
             else
             {
-                Node *successor = findMin(node->right);
+                Node *successor = FindSuccessor(node->right);
                 node->data = successor->data;
                 removeRecursive(node->right, successor->data);
             }
         }
     }
 
-    Node *findMin(Node *node)
+    Node *FindSuccessor(Node *node)
     {
         while (node->left != nullptr)
         {
@@ -306,9 +306,10 @@ private:
 };
 
 template <class T>
-BinaryTree<T>::BinaryTree(const BinaryTree &other)
+BinaryTree<T>::BinaryTree(const BinaryTree &tree)
 {
-    root = cloneRecursive(other.root);
+    root = copyRecursive(tree.root);
+    this->size = tree.size;
 }
 
 template <class T>
@@ -352,6 +353,7 @@ template <class T>
 void BinaryTree<T>::remove(const T &data)
 {
     removeRecursive(root, data);
+    size--;
 }
 
 template <class T>
@@ -417,9 +419,9 @@ BinaryTree<T> BinaryTree<T>::where(std::function<bool(T)> condition)
 }
 
 template <class T>
-void BinaryTree<T>::merge(BinaryTree<T> &otherTree)
+void BinaryTree<T>::merge(BinaryTree<T> &Tree)
 {
-    mergeRecursive(root, otherTree.root);
+    mergeRecursive(root, Tree.root);
 }
 
 template <class T>
