@@ -1,10 +1,11 @@
-#ifndef LAB3_STUDENT_H
-#define LAB3_STUDENT_H
+#ifndef STUDENT_H
+#define STUDENT_H
 
 #include <string>
 #include <iostream>
+#include "Enums.h"
 
-#define String std::string
+typedef std::string String;
 
 class Student
 {
@@ -12,58 +13,45 @@ private:
     long id;
     String name;
     String surname;
+    double avg_grade;
     String university;
-    String birthDate;
 
 public:
-    String address;
-    String phone;
-    int course;
-
     Student()
     {
         this->id = -1;
+        avg_grade = 0;
         name = "";
         surname = "";
-        birthDate = "";
         university = "";
-
-        course = -1;
-        address = "";
-        phone = "";
     }
 
     Student(
         long id,
         String name,
         String surname,
-        String university,
-        String birthDate)
+        double avg_grade,
+        String university)
     {
         this->id = id;
+        this->avg_grade = avg_grade;
         this->name = std::move(name);
         this->surname = std::move(surname);
-        this->birthDate = std::move(birthDate);
         this->university = std::move(university);
-
-        course = -1;
-        address = "";
-        phone = "";
     }
 
-    Student(
+    void Fill(
         long id,
         String name,
         String surname,
-        String university,
-        String birthDate,
-        String address,
-        String phone,
-        int course) : Student(id, std::move(name), std::move(surname), std::move(university), std::move(birthDate))
+        double avg_grade,
+        String university)
     {
-        this->course = course;
-        this->address = std::move(address);
-        this->phone = std::move(phone);
+        this->id = id;
+        this->avg_grade = avg_grade;
+        this->name = std::move(name);
+        this->surname = std::move(surname);
+        this->university = std::move(university);
     }
 
     String getName() const
@@ -81,44 +69,23 @@ public:
         return university;
     }
 
-    String getBirthDate() const
-    {
-        return birthDate;
-    }
-
     long getId() const
     {
         return id;
     }
 
-    bool operator>(const Student &c) const
+    double getAvgGrade() const
     {
-        return id > c.id;
-    }
-
-    bool operator<(const Student &c) const
-    {
-        return id < c.id;
-    }
-
-    bool operator>=(const Student &c) const
-    {
-        return id >= c.id;
-    }
-
-    bool operator<=(const Student &c) const
-    {
-        return id < c.id;
-    }
-
-    bool operator==(const Student &c) const
-    {
-        return id == c.id;
+        return avg_grade;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Student &s)
     {
-        return os << "Student(" << s.getId() << ")";
+        return os << "|id: " << s.getId()
+                  << "|name: " << s.getName()
+                  << "|surname: " << s.getSurname()
+                  << "|university: " << s.getUniversity()
+                  << "|average grade: " << s.getAvgGrade() << "|\n";
     }
 };
 

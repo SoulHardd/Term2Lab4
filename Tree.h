@@ -1,7 +1,11 @@
-#include <iostream>
+#ifndef TREE
+#define TREE
 #include <functional>
+#include "Student.h"
+#include "Enums.h"
+#include "KeyFunctions.h"
 
-template <typename T>
+template <class T>
 class BinaryTree
 {
 private:
@@ -16,39 +20,37 @@ private:
 
     Node *root;
     int size;
+    Key key;
 
 public:
     BinaryTree();
     ~BinaryTree();
+    BinaryTree(const Key &key);
     BinaryTree(const BinaryTree &tree);
-    BinaryTree(const T *values, const int &size);
+    BinaryTree(const T *values, const int &size, const Key &key);
 
-    int GetSize();
-    void insert(const T &data);
-    void remove(const T &data);
+    const int GetSize();
+    void Insert(const T &data);
+    void Remove(const T &data);
+    void InstallKey(const Key &key);
+    Key GetKey() { return key; }
 
-    T *LeftRootRight();
-    T *RootLeftRight();
-    T *LeftRightRoot();
-    T *RightRootLeft();
-    T *RootRightLeft();
-    T *RightLeftRoot();
+    const T *TreeTraversal(const Traversal &traversal);
 
-    BinaryTree<T> where(std::function<bool(T)> condition);
-    void merge(BinaryTree<T> &Tree);
-    BinaryTree<T> extractSubtree(const T &element);
-    bool searchElement(const T &value);
+    BinaryTree<T> Where(std::function<bool(T)> condition);
+    void Merge(BinaryTree<T> &Tree);
+    bool SearchElement(const T &value);
 
-    template <typename U>
-    BinaryTree<U> map(std::function<U(T)> func)
+    template <class U>
+    BinaryTree<U> Map(std::function<U(T)> func)
     {
-        BinaryTree<U> newTree;
-        mapRecursive(root, newTree, func);
+        BinaryTree<U> newTree(this->key);
+        MapRecursive(root, newTree, func);
         return newTree;
     }
 
 private:
-    Node *copyRecursive(Node *node)
+    Node *CopyTree(Node *node)
     {
         if (node == nullptr)
         {
@@ -56,55 +58,54 @@ private:
         }
 
         Node *newNode = new Node(node->data);
-        newNode->left = copyRecursive(node->left);
-        newNode->right = copyRecursive(node->right);
+        newNode->left = CopyTree(node->left);
+        newNode->right = CopyTree(node->right);
 
         return newNode;
     }
 
-    void deleteTree(Node *root)
+    void DeleteTree(Node *root)
     {
         if (root != nullptr)
         {
-            deleteTree(root->left);
-            deleteTree(root->right);
+            DeleteTree(root->left);
+            DeleteTree(root->right);
             delete root;
         }
     }
 
-    Node *insertRecursive(Node *root, const T &data)
+    Node *InsertRecursive(Node *root, const T &data)
     {
         if (root == nullptr)
         {
             return new Node(data);
         }
 
-        if (data < root->data)
+        if (Compare(key, data, root->data))
         {
-            root->left = insertRecursive(root->left, data);
+            root->left = InsertRecursive(root->left, data);
         }
-        else
+        else if (Compare(key, root->data, data))
         {
-            root->right = insertRecursive(root->right, data);
+            root->right = InsertRecursive(root->right, data);
         }
-
         return root;
     }
 
-    void removeRecursive(Node *&node, const T &data)
+    void RemoveRecursive(Node *&node, const T &data)
     {
         if (node == nullptr)
         {
             return;
         }
 
-        if (data < node->data)
+        if (Compare(key, data, node->data))
         {
-            removeRecursive(node->left, data);
+            RemoveRecursive(node->left, data);
         }
-        else if (data > node->data)
+        else if (Compare(key, node->data, data))
         {
-            removeRecursive(node->right, data);
+            RemoveRecursive(node->right, data);
         }
         else
         {
@@ -132,7 +133,7 @@ private:
             {
                 Node *successor = FindSuccessor(node->right);
                 node->data = successor->data;
-                removeRecursive(node->right, successor->data);
+                RemoveRecursive(node->right, successor->data);
             }
         }
     }
@@ -146,295 +147,203 @@ private:
         return node;
     }
 
-    void LeftRootRightRecursive(Node *root, T *arr, int &index)
+    void TreeTraversalRecursive(Node *root, T *arr, int &index, const Traversal &traversal)
     {
         if (root != nullptr)
         {
-            LeftRootRightRecursive(root->left, arr, index);
-            arr[index++] = root->data;
-            LeftRootRightRecursive(root->right, arr, index);
-        }
-    }
+            switch (traversal)
+            {
+            case LEFT_ROOT_RIGHT:
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                arr[index++] = root->data;
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                break;
 
-    void RootLeftRightRecursive(Node *root, T *arr, int &index)
-    {
-        if (root != nullptr)
-        {
-            arr[index++] = root->data;
-            RootLeftRightRecursive(root->left, arr, index);
-            RootLeftRightRecursive(root->right, arr, index);
-        }
-    }
+            case RIGHT_ROOT_LEFT:
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                arr[index++] = root->data;
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                break;
 
-    void LeftRightRootRecursive(Node *root, T *arr, int &index)
-    {
-        if (root != nullptr)
-        {
-            LeftRightRootRecursive(root->left, arr, index);
-            LeftRightRootRecursive(root->right, arr, index);
-            arr[index++] = root->data;
-        }
-    }
+            case ROOT_LEFT_RIGHT:
+                arr[index++] = root->data;
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                break;
 
-    void RightRootLeftRecursive(Node *root, T *arr, int &index)
-    {
-        if (root != nullptr)
-        {
-            RightRootLeftRecursive(root->right, arr, index);
-            arr[index++] = root->data;
-            RightRootLeftRecursive(root->left, arr, index);
-        }
-    }
+            case ROOT_RIGHT_LEFT:
+                arr[index++] = root->data;
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                break;
 
-    void RootRightLeftRecursive(Node *root, T *arr, int &index)
-    {
-        if (root != nullptr)
-        {
-            arr[index++] = root->data;
-            RootRightLeftRecursive(root->right, arr, index);
-            RootRightLeftRecursive(root->left, arr, index);
-        }
-    }
+            case LEFT_RIGHT_ROOT:
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                arr[index++] = root->data;
+                break;
 
-    void RightLeftRootRecursive(Node *root, T *arr, int &index)
-    {
-        if (root != nullptr)
-        {
-            RightLeftRootRecursive(root->right, arr, index);
-            RightLeftRootRecursive(root->left, arr, index);
-            arr[index++] = root->data;
+            case RIGHT_LEFT_ROOT:
+                TreeTraversalRecursive(root->right, arr, index, traversal);
+                TreeTraversalRecursive(root->left, arr, index, traversal);
+                arr[index++] = root->data;
+                break;
+            }
         }
     }
 
     template <typename U>
-    void mapRecursive(Node *root, BinaryTree<U> &newTree, std::function<U(T)> func)
+    void MapRecursive(Node *root, BinaryTree<U> &newTree, std::function<U(T)> func)
     {
         if (root != nullptr)
         {
-            newTree.insert(func(root->data));
-            mapRecursive(root->left, newTree, func);
-            mapRecursive(root->right, newTree, func);
+            newTree.Insert(func(root->data));
+            MapRecursive(root->left, newTree, func);
+            MapRecursive(root->right, newTree, func);
         }
     }
 
-    void whereRecursive(Node *root, BinaryTree<T> &newTree, std::function<bool(T)> condition)
+    void WhereRecursive(Node *root, BinaryTree<T> &newTree, std::function<bool(T)> condition)
     {
         if (root != nullptr)
         {
             if (condition(root->data))
             {
-                newTree.insert(root->data);
+                newTree.Insert(root->data);
             }
-            whereRecursive(root->left, newTree, condition);
-            whereRecursive(root->right, newTree, condition);
+            WhereRecursive(root->left, newTree, condition);
+            WhereRecursive(root->right, newTree, condition);
         }
     }
 
-    void mergeRecursive(Node *root1, Node *root2)
+    void MergeRecursive(Node *root1, Node *root2)
     {
         if (root2 != nullptr)
         {
-            mergeRecursive(root1, root2->left);
-            mergeRecursive(root1, root2->right);
-            insert(root1, root2->data);
+            MergeRecursive(root1, root2->left);
+            MergeRecursive(root1, root2->right);
+            root1 = InsertRecursive(root1, root2->data);
         }
     }
 
-    void insert(Node *root, T data)
-    {
-        if (data < root->data)
-        {
-            if (root->left == nullptr)
-            {
-                root->left = new Node(data);
-            }
-            else
-            {
-                insert(root->left, data);
-            }
-        }
-        else
-        {
-            if (root->right == nullptr)
-            {
-                root->right = new Node(data);
-            }
-            else
-            {
-                insert(root->right, data);
-            }
-        }
-    }
-
-    Node *findAndExtract(Node *root, T element)
-    {
-        if (root == nullptr)
-        {
-            return nullptr;
-        }
-
-        if (root->data == element)
-        {
-            Node *extractedNode = root;
-            root = nullptr;
-            return extractedNode;
-        }
-        else if (element < root->data)
-        {
-            return findAndExtract(root->left, element);
-        }
-        else
-        {
-            return findAndExtract(root->right, element);
-        }
-    }
-
-    bool searchElementRecursive(Node *root, T value)
+    bool SearchElementRecursive(Node *root, T value)
     {
         if (root == nullptr)
         {
             return false;
         }
 
-        if (root->data == value)
+        if (EqualCompare(key, root->data, value))
         {
             return true;
         }
 
-        return searchElementRecursive(root->left, value) || searchElementRecursive(root->right, value);
+        return SearchElementRecursive(root->left, value) || SearchElementRecursive(root->right, value);
     }
 };
-
-template <class T>
-BinaryTree<T>::BinaryTree(const BinaryTree &tree)
-{
-    root = copyRecursive(tree.root);
-    this->size = tree.size;
-}
 
 template <class T>
 BinaryTree<T>::BinaryTree()
 {
     root = nullptr;
     size = 0;
+    key = EMPTY;
 }
 
 template <class T>
-BinaryTree<T>::BinaryTree(const T *values, const int &size)
+BinaryTree<T>::BinaryTree(const Key &key)
 {
     root = nullptr;
+    size = 0;
+    this->key = key;
+}
 
+template <class T>
+BinaryTree<T>::BinaryTree(const BinaryTree &tree)
+{
+    root = CopyTree(tree.root);
+    this->size = tree.size;
+    this->key = tree.key;
+}
+
+template <class T>
+BinaryTree<T>::BinaryTree(const T *values, const int &size, const Key &key)
+{
+    root = nullptr;
+    this->key = key;
     for (int i = 0; i < size; ++i)
     {
-        insert(values[i]);
+        Insert(values[i]);
     }
 }
 
 template <class T>
 BinaryTree<T>::~BinaryTree()
 {
-    deleteTree(root);
+    DeleteTree(root);
 }
 
 template <class T>
-int BinaryTree<T>::GetSize()
+const int BinaryTree<T>::GetSize()
 {
     return this->size;
 }
 
 template <class T>
-void BinaryTree<T>::insert(const T &data)
+void BinaryTree<T>::InstallKey(const Key &key)
 {
-    root = insertRecursive(root, data);
+    if (this->key != EMPTY)
+    {
+        throw std::logic_error("Key can't be reinstalled");
+    }
+    this->key = key;
+}
+
+template <class T>
+void BinaryTree<T>::Insert(const T &data)
+{
+    if (key == EMPTY)
+    {
+        throw std::logic_error("Key is empty");
+    }
+    this->root = InsertRecursive(this->root, data);
     size++;
 }
 
 template <class T>
-void BinaryTree<T>::remove(const T &data)
+void BinaryTree<T>::Remove(const T &data)
 {
-    removeRecursive(root, data);
+    RemoveRecursive(root, data);
     size--;
 }
 
 template <class T>
-T *BinaryTree<T>::LeftRootRight()
+const T *BinaryTree<T>::TreeTraversal(const Traversal &traversal)
 {
     int index = 0;
     T *arr = new T[size];
-    LeftRootRightRecursive(root, arr, index);
+    TreeTraversalRecursive(root, arr, index, traversal);
     return arr;
 }
 
 template <class T>
-T *BinaryTree<T>::RootLeftRight()
+BinaryTree<T> BinaryTree<T>::Where(std::function<bool(T)> condition)
 {
-    int index = 0;
-    T *arr = new T[size];
-    RootLeftRightRecursive(root, arr, index);
-    return arr;
-}
-
-template <class T>
-T *BinaryTree<T>::LeftRightRoot()
-{
-    int index = 0;
-    T *arr = new T[size];
-    LeftRightRootRecursive(root, arr, index);
-    return arr;
-}
-
-template <class T>
-T *BinaryTree<T>::RightRootLeft()
-{
-    int index = 0;
-    T *arr = new T[size];
-    RightRootLeftRecursive(root, arr, index);
-    return arr;
-}
-
-template <class T>
-T *BinaryTree<T>::RootRightLeft()
-{
-    int index = 0;
-    T *arr = new T[size];
-    RootRightLeftRecursive(root, arr, index);
-    return arr;
-}
-
-template <class T>
-T *BinaryTree<T>::RightLeftRoot()
-{
-    int index = 0;
-    T *arr = new T[size];
-    RightLeftRootRecursive(root, arr, index);
-    return arr;
-}
-
-template <class T>
-BinaryTree<T> BinaryTree<T>::where(std::function<bool(T)> condition)
-{
-    BinaryTree<T> newTree;
-    whereRecursive(root, newTree, condition);
+    BinaryTree<T> newTree(this->key);
+    WhereRecursive(root, newTree, condition);
     return newTree;
 }
 
 template <class T>
-void BinaryTree<T>::merge(BinaryTree<T> &Tree)
+void BinaryTree<T>::Merge(BinaryTree<T> &Tree)
 {
-    mergeRecursive(root, Tree.root);
+    MergeRecursive(root, Tree.root);
 }
 
 template <class T>
-BinaryTree<T> BinaryTree<T>::extractSubtree(const T &element)
+bool BinaryTree<T>::SearchElement(const T &value)
 {
-    Node *extractedNode = findAndExtract(root, element);
-    BinaryTree<T> extractedTree;
-    extractedTree.root = extractedNode;
-    return extractedTree;
+    return SearchElementRecursive(root, value);
 }
 
-template <class T>
-bool BinaryTree<T>::searchElement(const T &value)
-{
-    return searchElementRecursive(root, value);
-}
+#endif
