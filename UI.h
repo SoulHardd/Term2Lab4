@@ -5,24 +5,27 @@
 
 int mainMenu();
 int DataTypeChoice();
-template <class T>
-void ReadNInsertElementsBinary(BinaryTree<T> &Tree);
-template <class T>
-void ReadNInsertElementsTernary(TernaryTree<T> &Tree);
 int actionMenu();
-template <class T>
-void ActionsOfActionMenuBinary(BinaryTree<T> &Tree, int action);
-template <class T>
-void ActionsOfActionMenuTernary(TernaryTree<T> &Tree, int action);
+
+void ReadNInsertElementsBinaryInt(BinaryTree<int> &Tree);
+void ReadNInsertElementsTernaryInt(TernaryTree<int> &Tree);
+void ActionsOfActionMenuBinaryInt(BinaryTree<int> &Tree, int action);
+void ActionsOfActionMenuTernaryInt(TernaryTree<int> &Tree, int action);
+
+void ReadNInsertElementsBinaryDouble(BinaryTree<double> &Tree);
+void ReadNInsertElementsTernaryDouble(TernaryTree<double> &Tree);
+void ActionsOfActionMenuBinaryDouble(BinaryTree<double> &Tree, int action);
+void ActionsOfActionMenuTernaryDouble(TernaryTree<double> &Tree, int action);
+
 void ActionsOfActionMenuTernaryComplex(TernaryTree<Complex> &Tree, int action);
 void ActionsOfActionMenuBinaryComplex(BinaryTree<Complex> &Tree, int action);
 void ReadNInsertElementsBinaryComplex(BinaryTree<Complex> &Tree);
 void ReadNInsertElementsTernaryComplex(TernaryTree<Complex> &Tree);
 
-void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action);
-void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action);
-void ReadNInsertElementsBinaryStudent(BinaryTree<Student> &Tree);
-void ReadNInsertElementsTernaryStudent(TernaryTree<Student> &Tree);
+void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action, Key StudentKey);
+void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action, Key StudentKey);
+void ReadNInsertElementsBinaryStudent(BinaryTree<Student> &Tree, Key StudentKey);
+void ReadNInsertElementsTernaryStudent(TernaryTree<Student> &Tree, Key StudentKey);
 Key ChooseStudentKey();
 
 void UI()
@@ -36,27 +39,27 @@ void UI()
         DataType = DataTypeChoice();
         if (DataType == 1)
         {
-            BinaryTree<int> Tree(NUMBERS);
-            ReadNInsertElementsBinary(Tree);
+            BinaryTree<int> Tree;
+            ReadNInsertElementsBinaryInt(Tree);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuBinary(Tree, ActMenuChoice);
+                ActionsOfActionMenuBinaryInt(Tree, ActMenuChoice);
             } while (ActMenuChoice != 5);
         }
         else if (DataType == 2)
         {
-            BinaryTree<double> Tree(NUMBERS);
-            ReadNInsertElementsBinary(Tree);
+            BinaryTree<double> Tree;
+            ReadNInsertElementsBinaryDouble(Tree);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuBinary(Tree, ActMenuChoice);
+                ActionsOfActionMenuBinaryDouble(Tree, ActMenuChoice);
             } while (ActMenuChoice != 5);
         }
         else if (DataType == 3)
         {
-            BinaryTree<Complex> Tree(NUMBERS);
+            BinaryTree<Complex> Tree;
             ReadNInsertElementsBinaryComplex(Tree);
             do
             {
@@ -67,12 +70,12 @@ void UI()
         else
         {
             StudentKey = ChooseStudentKey();
-            BinaryTree<Student> Tree(StudentKey);
-            ReadNInsertElementsBinaryStudent(Tree);
+            BinaryTree<Student> Tree;
+            ReadNInsertElementsBinaryStudent(Tree, StudentKey);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuBinaryStudent(Tree, ActMenuChoice);
+                ActionsOfActionMenuBinaryStudent(Tree, ActMenuChoice, StudentKey);
             } while (ActMenuChoice != 5);
         }
 
@@ -82,27 +85,27 @@ void UI()
         DataType = DataTypeChoice();
         if (DataType == 1)
         {
-            TernaryTree<int> Tree(NUMBERS);
-            ReadNInsertElementsTernary(Tree);
+            TernaryTree<int> Tree;
+            ReadNInsertElementsTernaryInt(Tree);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuTernary(Tree, ActMenuChoice);
+                ActionsOfActionMenuTernaryInt(Tree, ActMenuChoice);
             } while (ActMenuChoice != 5);
         }
         else if (DataType == 2)
         {
-            TernaryTree<double> Tree(NUMBERS);
-            ReadNInsertElementsTernary(Tree);
+            TernaryTree<double> Tree;
+            ReadNInsertElementsTernaryDouble(Tree);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuTernary(Tree, ActMenuChoice);
+                ActionsOfActionMenuTernaryDouble(Tree, ActMenuChoice);
             } while (ActMenuChoice != 5);
         }
         else if (DataType == 3)
         {
-            TernaryTree<Complex> Tree(NUMBERS);
+            TernaryTree<Complex> Tree;
             ReadNInsertElementsTernaryComplex(Tree);
             do
             {
@@ -113,12 +116,12 @@ void UI()
         else
         {
             StudentKey = ChooseStudentKey();
-            TernaryTree<Student> Tree(StudentKey);
-            ReadNInsertElementsTernaryStudent(Tree);
+            TernaryTree<Student> Tree;
+            ReadNInsertElementsTernaryStudent(Tree, StudentKey);
             do
             {
                 ActMenuChoice = actionMenu();
-                ActionsOfActionMenuTernaryStudent(Tree, ActMenuChoice);
+                ActionsOfActionMenuTernaryStudent(Tree, ActMenuChoice, StudentKey);
             } while (ActMenuChoice != 5);
         }
         break;
@@ -172,18 +175,66 @@ int DataTypeChoice()
     return DataType;
 }
 
-template <class T>
-void ReadNInsertElementsBinary(BinaryTree<T> &Tree)
+void ReadNInsertElementsBinaryInt(BinaryTree<int> &Tree)
 {
     std::cout << "Enter number of elements\n\n";
     int size;
     std::cin >> size;
-    T element;
+    int element;
     std::cout << "Enter elements\n\n";
     for (int i = 0; i < size; i++)
     {
         std::cin >> element;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionInt);
+    }
+
+    std::cout << "\n\n";
+}
+
+void ReadNInsertElementsBinaryDouble(BinaryTree<double> &Tree)
+{
+    std::cout << "Enter number of elements\n\n";
+    int size;
+    std::cin >> size;
+    double element;
+    std::cout << "Enter elements\n\n";
+    for (int i = 0; i < size; i++)
+    {
+        std::cin >> element;
+        Tree.Insert(element, KeyFunctionDouble);
+    }
+
+    std::cout << "\n\n";
+}
+
+void ReadNInsertElementsTernaryInt(TernaryTree<int> &Tree)
+{
+    std::cout << "Enter number of elements\n\n";
+    int size;
+    std::cin >> size;
+    int element;
+    std::cout << "Enter elements\n\n";
+
+    for (int i = 0; i < size; i++)
+    {
+        std::cin >> element;
+        Tree.Insert(element, KeyFunctionInt);
+    }
+    std::cout << "\n\n";
+}
+
+void ReadNInsertElementsTernaryDouble(TernaryTree<double> &Tree)
+{
+    std::cout << "Enter number of elements\n\n";
+    int size;
+    std::cin >> size;
+    double element;
+    std::cout << "Enter elements\n\n";
+
+    for (int i = 0; i < size; i++)
+    {
+        std::cin >> element;
+        Tree.Insert(element, KeyFunctionDouble);
     }
     std::cout << "\n\n";
 }
@@ -201,7 +252,7 @@ void ReadNInsertElementsBinaryComplex(BinaryTree<Complex> &Tree)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionComplex);
     }
     std::cout << "\n\n";
 }
@@ -219,12 +270,12 @@ void ReadNInsertElementsTernaryComplex(TernaryTree<Complex> &Tree)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionComplex);
     }
     std::cout << "\n\n";
 }
 
-void ReadNInsertElementsBinaryStudent(BinaryTree<Student> &Tree)
+void ReadNInsertElementsBinaryStudent(BinaryTree<Student> &Tree, Key StudentKey)
 {
     std::cout << "Enter number of elements\n\n";
     int size;
@@ -247,12 +298,12 @@ void ReadNInsertElementsBinaryStudent(BinaryTree<Student> &Tree)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Insert(student);
+        Tree.Insert(student, KeyFunctionsStudents[StudentKey]);
     }
     std::cout << "\n\n";
 }
 
-void ReadNInsertElementsTernaryStudent(TernaryTree<Student> &Tree)
+void ReadNInsertElementsTernaryStudent(TernaryTree<Student> &Tree, Key StudentKey)
 {
     std::cout << "Enter number of elements\n\n";
     int size;
@@ -275,23 +326,7 @@ void ReadNInsertElementsTernaryStudent(TernaryTree<Student> &Tree)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Insert(student);
-    }
-    std::cout << "\n\n";
-}
-
-template <class T>
-void ReadNInsertElementsTernary(TernaryTree<T> &Tree)
-{
-    std::cout << "Enter number of elements\n\n";
-    int size;
-    std::cin >> size;
-    T element;
-    std::cout << "Enter elements\n\n";
-    for (int i = 0; i < size; i++)
-    {
-        std::cin >> element;
-        Tree.Insert(element);
+        Tree.Insert(student, KeyFunctionsStudents[StudentKey]);
     }
     std::cout << "\n\n";
 }
@@ -317,10 +352,9 @@ int actionMenu()
     return actionMenuChoice;
 }
 
-template <class T>
-void ActionsOfActionMenuBinary(BinaryTree<T> &Tree, int action)
+void ActionsOfActionMenuBinaryInt(BinaryTree<int> &Tree, int action)
 {
-    T element;
+    int element;
     switch (action)
     {
     case 1:
@@ -344,20 +378,19 @@ void ActionsOfActionMenuBinary(BinaryTree<T> &Tree, int action)
     case 3:
         std::cout << "Enter element\n";
         std::cin >> element;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionInt);
         break;
     case 4:
         std::cout << "Enter element\n";
         std::cin >> element;
-        Tree.Remove(element);
+        Tree.Remove(element, KeyFunctionInt);
         break;
     }
 }
 
-template <class T>
-void ActionsOfActionMenuTernary(TernaryTree<T> &Tree, int action)
+void ActionsOfActionMenuBinaryDouble(BinaryTree<double> &Tree, int action)
 {
-    T element;
+    double element;
     switch (action)
     {
     case 1:
@@ -381,12 +414,84 @@ void ActionsOfActionMenuTernary(TernaryTree<T> &Tree, int action)
     case 3:
         std::cout << "Enter element\n";
         std::cin >> element;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionDouble);
         break;
     case 4:
         std::cout << "Enter element\n";
         std::cin >> element;
-        Tree.Remove(element);
+        Tree.Remove(element, KeyFunctionDouble);
+        break;
+    }
+}
+
+void ActionsOfActionMenuTernaryInt(TernaryTree<int> &Tree, int action)
+{
+    int element;
+    switch (action)
+    {
+    case 1:
+        for (int i = 0; i < Tree.GetSize(); i++)
+        {
+            std::cout << (Tree.TreeTraversal(LEFT_ROOT_RIGHT))[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        break;
+
+    case 2:
+        for (int i = 0; i < Tree.GetSize(); i++)
+        {
+            std::cout << (Tree.TreeTraversal(RIGHT_ROOT_LEFT))[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        break;
+
+    case 3:
+        std::cout << "Enter element\n";
+        std::cin >> element;
+        Tree.Insert(element, KeyFunctionInt);
+        break;
+    case 4:
+        std::cout << "Enter element\n";
+        std::cin >> element;
+        Tree.Remove(element, KeyFunctionInt);
+        break;
+    }
+}
+
+void ActionsOfActionMenuTernaryDouble(TernaryTree<double> &Tree, int action)
+{
+    double element;
+    switch (action)
+    {
+    case 1:
+        for (int i = 0; i < Tree.GetSize(); i++)
+        {
+            std::cout << (Tree.TreeTraversal(LEFT_ROOT_RIGHT))[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        break;
+
+    case 2:
+        for (int i = 0; i < Tree.GetSize(); i++)
+        {
+            std::cout << (Tree.TreeTraversal(RIGHT_ROOT_LEFT))[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        break;
+
+    case 3:
+        std::cout << "Enter element\n";
+        std::cin >> element;
+        Tree.Insert(element, KeyFunctionDouble);
+        break;
+    case 4:
+        std::cout << "Enter element\n";
+        std::cin >> element;
+        Tree.Remove(element, KeyFunctionDouble);
         break;
     }
 }
@@ -420,7 +525,7 @@ void ActionsOfActionMenuBinaryComplex(BinaryTree<Complex> &Tree, int action)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionComplex);
         break;
     case 4:
         std::cout << "Enter element\n";
@@ -428,7 +533,7 @@ void ActionsOfActionMenuBinaryComplex(BinaryTree<Complex> &Tree, int action)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Remove(element);
+        Tree.Remove(element, KeyFunctionComplex);
         break;
     }
 }
@@ -462,7 +567,7 @@ void ActionsOfActionMenuTernaryComplex(TernaryTree<Complex> &Tree, int action)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Insert(element);
+        Tree.Insert(element, KeyFunctionComplex);
         break;
     case 4:
         std::cout << "Enter element\n";
@@ -470,12 +575,12 @@ void ActionsOfActionMenuTernaryComplex(TernaryTree<Complex> &Tree, int action)
         std::cin >> element.re;
         std::cout << "Im: ";
         std::cin >> element.im;
-        Tree.Remove(element);
+        Tree.Remove(element, KeyFunctionComplex);
         break;
     }
 }
 
-void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action)
+void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action, Key StudentKey)
 {
     Student student;
     long int Id;
@@ -513,7 +618,7 @@ void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Insert(student);
+        Tree.Insert(student, KeyFunctionsStudents[StudentKey]);
         break;
     case 4:
         std::cout << "Id: ";
@@ -527,12 +632,12 @@ void ActionsOfActionMenuBinaryStudent(BinaryTree<Student> &Tree, int action)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Remove(student);
+        Tree.Remove(student, KeyFunctionsStudents[StudentKey]);
         break;
     }
 }
 
-void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action)
+void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action, Key StudentKey)
 {
     Student student;
     long int Id;
@@ -570,7 +675,7 @@ void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Insert(student);
+        Tree.Insert(student, KeyFunctionsStudents[StudentKey]);
         break;
     case 4:
         std::cout << "Id: ";
@@ -584,7 +689,7 @@ void ActionsOfActionMenuTernaryStudent(TernaryTree<Student> &Tree, int action)
         std::cout << "University: ";
         std::cin >> university;
         student.Fill(Id, name, surname, avg_grade, university);
-        Tree.Remove(student);
+        Tree.Remove(student, KeyFunctionsStudents[StudentKey]);
         break;
     }
 }

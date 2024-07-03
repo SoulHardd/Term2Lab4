@@ -5,15 +5,16 @@
 #include <cassert>
 #include "Complex.h"
 #include "TernaryTree.h"
+#include "Enums.h"
 
 void testsStudents()
 {
 
-    TernaryTree<Student> StudentsID(ID);
-    TernaryTree<Student> StudentsGrade(AVG_GRADE);
-    TernaryTree<Student> StudentsName(NAME);
-    TernaryTree<Student> StudentsSurname(SURNAME);
-    TernaryTree<Student> StudentsUniversity(UNIVERSITY);
+    TernaryTree<Student> StudentsID(KeyFunctionsStudents[ID]);
+    TernaryTree<Student> StudentsGrade(KeyFunctionsStudents[AVG_GRADE]);
+    TernaryTree<Student> StudentsName(KeyFunctionsStudents[NAME]);
+    TernaryTree<Student> StudentsSurname(KeyFunctionsStudents[SURNAME]);
+    TernaryTree<Student> StudentsUniversity(KeyFunctionsStudents[UNIVERSITY]);
 
     Student student1(123, "Vladislav", "Bogatyrenko", 4.5, "MEPHI");
     Student student2(52, "Kirill", "Antonov", 4.5, "MSU");

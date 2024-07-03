@@ -5,14 +5,15 @@
 #include <cassert>
 #include "Complex.h"
 #include "Enums.h"
+#include "KeyFunctions.h"
 
 void tests3Tree()
 {
     Complex Num1(1, 1), Num2(3, 5), Num3(7, 8);
 
-    TernaryTree<int> TernaryTreeInt(NUMBERS);
-    TernaryTree<double> TernaryTreeDouble(NUMBERS);
-    TernaryTree<Complex> TernaryTreeComplex(NUMBERS);
+    TernaryTree<int> TernaryTreeInt(KeyFunctionInt);
+    TernaryTree<double> TernaryTreeDouble(KeyFunctionDouble);
+    TernaryTree<Complex> TernaryTreeComplex(KeyFunctionComplex);
 
     TernaryTreeInt.Insert(3);
     TernaryTreeInt.Insert(3);
@@ -78,7 +79,7 @@ void tests3Tree()
 
     // Remove test
 
-    TernaryTree<int> removeTree2(NUMBERS);
+    TernaryTree<int> removeTree2(KeyFunctionInt);
     removeTree2.Insert(1);
     removeTree2.Insert(2);
     removeTree2.Insert(3);

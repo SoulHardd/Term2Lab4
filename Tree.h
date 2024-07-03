@@ -20,31 +20,28 @@ private:
 
     Node *root;
     int size;
-    Key key;
+    const int (*KeyFunction)(const T &, const T &);
 
 public:
-    BinaryTree();
+    BinaryTree(const int (*KeyFunction)(const T &, const T &));
     ~BinaryTree();
-    BinaryTree(const Key &key);
-    BinaryTree(const BinaryTree &tree);
-    BinaryTree(const T *values, const int &size, const Key &key);
+    BinaryTree(const BinaryTree &tree, const int (*KeyFunction)(const T &, const T &));
+    BinaryTree(T *values, const int &size, const int (*KeyFunction)(const T &, const T &));
 
     const int GetSize();
-    void Insert(const T &data);
-    void Remove(const T &data);
-    void InstallKey(const Key &key);
-    Key GetKey() { return key; }
+    BinaryTree<T> Insert(const T &data);
+    BinaryTree<T> Remove(const T &data);
 
     const T *TreeTraversal(const Traversal &traversal);
 
     BinaryTree<T> Where(std::function<bool(T)> condition);
-    void Merge(BinaryTree<T> &Tree);
+    BinaryTree<T> Merge(BinaryTree<T> &Tree);
     bool SearchElement(const T &value);
 
     template <class U>
     BinaryTree<U> Map(std::function<U(T)> func)
     {
-        BinaryTree<U> newTree(this->key);
+        BinaryTree<U> newTree(KeyFunction);
         MapRecursive(root, newTree, func);
         return newTree;
     }
@@ -81,11 +78,11 @@ private:
             return new Node(data);
         }
 
-        if (Compare(key, data, root->data))
+        if (KeyFunction(data, root->data) == -1)
         {
             root->left = InsertRecursive(root->left, data);
         }
-        else if (Compare(key, root->data, data))
+        else if (KeyFunction(data, root->data) == 1)
         {
             root->right = InsertRecursive(root->right, data);
         }
@@ -98,12 +95,11 @@ private:
         {
             return;
         }
-
-        if (Compare(key, data, node->data))
+        if (KeyFunction(data, node->data) == -1)
         {
             RemoveRecursive(node->left, data);
         }
-        else if (Compare(key, node->data, data))
+        else if (KeyFunction(data, node->data) == 1)
         {
             RemoveRecursive(node->right, data);
         }
@@ -233,7 +229,7 @@ private:
             return false;
         }
 
-        if (EqualCompare(key, root->data, value))
+        if (KeyFunction(root->data, value) == 0)
         {
             return true;
         }
@@ -243,34 +239,25 @@ private:
 };
 
 template <class T>
-BinaryTree<T>::BinaryTree()
+BinaryTree<T>::BinaryTree(const int (*KeyFunction)(const T &, const T &))
 {
+    this->KeyFunction = KeyFunction;
     root = nullptr;
     size = 0;
-    key = EMPTY;
 }
 
 template <class T>
-BinaryTree<T>::BinaryTree(const Key &key)
-{
-    root = nullptr;
-    size = 0;
-    this->key = key;
-}
-
-template <class T>
-BinaryTree<T>::BinaryTree(const BinaryTree &tree)
+BinaryTree<T>::BinaryTree(const BinaryTree &tree, const int (*KeyFunction)(const T &, const T &))
 {
     root = CopyTree(tree.root);
     this->size = tree.size;
-    this->key = tree.key;
+    this->KeyFunction = KeyFunction;
 }
 
 template <class T>
-BinaryTree<T>::BinaryTree(const T *values, const int &size, const Key &key)
+BinaryTree<T>::BinaryTree(T *values, const int &size, const int (*KeyFunction)(const T &, const T &))
 {
     root = nullptr;
-    this->key = key;
     for (int i = 0; i < size; ++i)
     {
         Insert(values[i]);
@@ -290,31 +277,19 @@ const int BinaryTree<T>::GetSize()
 }
 
 template <class T>
-void BinaryTree<T>::InstallKey(const Key &key)
+BinaryTree<T> BinaryTree<T>::Insert(const T &data)
 {
-    if (this->key != EMPTY)
-    {
-        throw std::logic_error("Key can't be reinstalled");
-    }
-    this->key = key;
-}
-
-template <class T>
-void BinaryTree<T>::Insert(const T &data)
-{
-    if (key == EMPTY)
-    {
-        throw std::logic_error("Key is empty");
-    }
     this->root = InsertRecursive(this->root, data);
     size++;
+    return this;
 }
 
 template <class T>
-void BinaryTree<T>::Remove(const T &data)
+BinaryTree<T> BinaryTree<T>::Remove(const T &data)
 {
     RemoveRecursive(root, data);
     size--;
+    return this;
 }
 
 template <class T>
@@ -329,15 +304,16 @@ const T *BinaryTree<T>::TreeTraversal(const Traversal &traversal)
 template <class T>
 BinaryTree<T> BinaryTree<T>::Where(std::function<bool(T)> condition)
 {
-    BinaryTree<T> newTree(this->key);
+    BinaryTree<T> newTree(KeyFunction);
     WhereRecursive(root, newTree, condition);
     return newTree;
 }
 
 template <class T>
-void BinaryTree<T>::Merge(BinaryTree<T> &Tree)
+BinaryTree<T> BinaryTree<T>::Merge(BinaryTree<T> &Tree)
 {
     MergeRecursive(root, Tree.root);
+    return this;
 }
 
 template <class T>

@@ -1,6 +1,11 @@
-#include "UI.h"
+// #include "UI.h"
+#include "Tests2Tree.h"
+#include "Tests3Tree.h"
+#include "TestsStudents.h"
 
 int main()
 {
-    UI();
+    tests2Tree();
+    tests3Tree();
+    testsStudents();
 }

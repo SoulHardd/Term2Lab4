@@ -3,128 +3,91 @@
 
 #include "Student.h"
 #include <functional>
+#include "Complex.h"
 
-template <class T>
-bool CompareNumbers(const T &num1, const T &num2)
-{
-    if (num1 < num2)
-        return true;
-    else
-        return false;
-}
-
-bool CompareID(const Student &student1, const Student &student2)
+const int CompareID(const Student &student1, const Student &student2)
 {
     if (student1.getId() < student2.getId())
-        return true;
+        return -1;
+    else if (student1.getId() > student2.getId())
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool CompareAvg(const Student &student1, const Student &student2)
+const int CompareAvg(const Student &student1, const Student &student2)
 {
     if (student1.getAvgGrade() < student2.getAvgGrade())
-        return true;
+        return -1;
+    else if (student1.getAvgGrade() > student2.getAvgGrade())
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool CompareName(const Student &student1, const Student &student2)
+const int CompareName(const Student &student1, const Student &student2)
 {
     if (student1.getName() < student2.getName())
-        return true;
+        return -1;
+    else if (student1.getName() > student2.getName())
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool CompareSurname(const Student &student1, const Student &student2)
+const int CompareSurname(const Student &student1, const Student &student2)
 {
     if (student1.getSurname() < student2.getSurname())
-        return true;
+        return -1;
+    else if (student1.getSurname() > student2.getSurname())
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool CompareUniversity(const Student &student1, const Student &student2)
+const int CompareUniversity(const Student &student1, const Student &student2)
 {
     if (student1.getUniversity() < student2.getUniversity())
-        return true;
+        return -1;
+    else if (student1.getUniversity() < student2.getUniversity())
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-template <class T>
-bool EqualCompareNumbers(const T &num1, const T &num2)
+const int CompareInt(const int &num1, const int &num2)
 {
-    if (num1 == num2)
-        return true;
+    if (num1 < num2)
+        return -1;
+    else if (num1 > num2)
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool EqualCompareID(const Student &student1, const Student &student2)
+const int CompareDouble(const double &num1, const double &num2)
 {
-    if (student1.getId() == student2.getId())
-        return true;
+    if (num1 < num2)
+        return -1;
+    else if (num1 > num2)
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool EqualCompareAvg(const Student &student1, const Student &student2)
+const int CompareComplex(const Complex &num1, const Complex &num2)
 {
-    if (student1.getAvgGrade() == student2.getAvgGrade())
-        return true;
+    if (num1 < num2)
+        return -1;
+    else if (num1 > num2)
+        return 1;
     else
-        return false;
+        return 0;
 }
 
-bool EqualCompareName(const Student &student1, const Student &student2)
-{
-    if (student1.getName() == student2.getName())
-        return true;
-    else
-        return false;
-}
-
-bool EqualCompareSurname(const Student &student1, const Student &student2)
-{
-    if (student1.getSurname() == student2.getSurname())
-        return true;
-    else
-        return false;
-}
-
-bool EqualCompareUniversity(const Student &student1, const Student &student2)
-{
-    if (student1.getUniversity() == student2.getUniversity())
-        return true;
-    else
-        return false;
-}
-
-bool (*KeyFunctions[5])(const Student &student1, const Student &student2) = {CompareID, CompareAvg, CompareName, CompareSurname, CompareUniversity};
-bool (*EqualKeyFunctions[5])(const Student &student1, const Student &student2) = {EqualCompareID, EqualCompareAvg, EqualCompareName, EqualCompareSurname, EqualCompareUniversity};
-
-bool Compare(const Key &key, const Student &data1, const Student &data2)
-{
-    return (*KeyFunctions[key])(data1, data2);
-}
-
-template <class T>
-bool Compare(const Key &key, const T &data1, const T &data2)
-{
-    return CompareNumbers(data1, data2);
-}
-
-bool EqualCompare(const Key &key, const Student &data1, const Student &data2)
-{
-    return (*EqualKeyFunctions[key])(data1, data2);
-}
-
-template <class T>
-bool EqualCompare(const Key &key, const T &data1, const T &data2)
-{
-    return EqualCompareNumbers(data1, data2);
-}
+const int (*KeyFunctionsStudents[5])(const Student &, const Student &) = {CompareID, CompareAvg, CompareName, CompareSurname, CompareUniversity};
+const int (*KeyFunctionInt)(const int &, const int &) = {CompareInt};
+const int (*KeyFunctionDouble)(const double &, const double &) = CompareDouble;
+const int (*KeyFunctionComplex)(const Complex &, const Complex &) = CompareComplex;
 
 #endif

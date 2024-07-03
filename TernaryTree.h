@@ -1,6 +1,7 @@
 #ifndef TERNARY_TREE
 #define TERNARY_TREE
 #include <functional>
+#include "Enums.h"
 
 template <class T>
 class TernaryTree
@@ -17,32 +18,27 @@ private:
     };
     Node *root;
     int size;
-    Key key;
+    const int (*KeyFunction)(const T &, const T &);
 
 public:
-    TernaryTree();
-    TernaryTree(const Key &key);
-    TernaryTree(const TernaryTree &tree);
+    TernaryTree(const int (*KeyFunction)(const T &, const T &));
+    TernaryTree(const TernaryTree &tree, const int (*KeyFunction)(const T &, const T &));
     ~TernaryTree();
 
     void Insert(const T &data);
     bool SearchElement(const T &data);
     void Remove(const T &data);
     int GetSize();
-    void InstallKey(const Key &key);
-    Key GetKey() { return key; }
 
     TernaryTree<T> Where(std::function<bool(T)> condition);
     void Merge(TernaryTree<T> &Tree);
-    TernaryTree<T> ExtractSubtree(const T &element);
 
     const T *TreeTraversal(const Traversal &traversal);
 
     template <class U>
     TernaryTree<U> Map(std::function<U(T)> func)
     {
-        TernaryTree<U> newTree;
-        newTree.key = this->key;
+        TernaryTree<U> newTree(KeyFunction);
         MapRecursive(root, newTree, func);
         return newTree;
     }
@@ -81,11 +77,11 @@ private:
             return new Node(data);
         }
 
-        if (Compare(key, data, root->data))
+        if (KeyFunction(data, root->data) == -1)
         {
             root->left = InsertRecursive(root->left, data);
         }
-        else if (Compare(key, root->data, data))
+        else if (KeyFunction(data, root->data) == 1)
         {
             root->right = InsertRecursive(root->right, data);
         }
@@ -113,11 +109,11 @@ private:
             return;
         }
 
-        if (Compare(key, data, node->data))
+        if (KeyFunction(data, node->data) == -1)
         {
             RemoveRecursive(node->left, data);
         }
-        else if (Compare(key, node->data, data))
+        else if (KeyFunction(data, node->data) == 1)
         {
             RemoveRecursive(node->right, data);
         }
@@ -164,7 +160,7 @@ private:
             return false;
         }
 
-        if (EqualCompare(key, root->data, value))
+        if (KeyFunction(value, root->data) == 0)
         {
             return true;
         }
@@ -262,27 +258,18 @@ private:
 };
 
 template <class T>
-TernaryTree<T>::TernaryTree()
+TernaryTree<T>::TernaryTree(const int (*KeyFunction)(const T &, const T &))
 {
     root = nullptr;
     size = 0;
-    key = EMPTY;
+    this->KeyFunction = KeyFunction;
 }
 
 template <class T>
-TernaryTree<T>::TernaryTree(const Key &key)
-{
-    root = nullptr;
-    size = 0;
-    this->key = key;
-}
-
-template <class T>
-TernaryTree<T>::TernaryTree(const TernaryTree &tree)
+TernaryTree<T>::TernaryTree(const TernaryTree &tree, const int (*KeyFunction)(const T &, const T &))
 {
     root = CopyTree(tree.root);
     this->size = tree.size;
-    this->key = tree.key;
 }
 
 template <class T>
@@ -294,22 +281,8 @@ TernaryTree<T>::~TernaryTree()
 template <class T>
 void TernaryTree<T>::Insert(const T &data)
 {
-    if (key == EMPTY)
-    {
-        throw std::logic_error("Key is empty");
-    }
     root = InsertRecursive(root, data);
     size++;
-}
-
-template <class T>
-void TernaryTree<T>::InstallKey(const Key &key)
-{
-    if (this->key != EMPTY)
-    {
-        throw std::logic_error("Key can't be reinstalled");
-    }
-    this->key = key;
 }
 
 template <class T>
@@ -337,8 +310,7 @@ const T *TernaryTree<T>::TreeTraversal(const Traversal &traversal)
 template <class T>
 TernaryTree<T> TernaryTree<T>::Where(std::function<bool(T)> condition)
 {
-    TernaryTree<T> newTree;
-    newTree.key = this->key;
+    TernaryTree<T> newTree(KeyFunction);
     WhereRecursive(root, newTree, condition);
     return newTree;
 }

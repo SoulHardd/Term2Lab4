@@ -8,9 +8,9 @@
 
 void tests2Tree()
 {
-    BinaryTree<int> TreeInt(NUMBERS);
-    BinaryTree<double> TreeDouble(NUMBERS);
-    BinaryTree<Complex> TreeComplex(NUMBERS);
+    BinaryTree<int> TreeInt(KeyFunctionInt);
+    BinaryTree<double> TreeDouble(KeyFunctionDouble);
+    BinaryTree<Complex> TreeComplex(KeyFunctionComplex);
 
     Complex num1(7, 8), num2(19, 3), num3(0, 1);
 
@@ -124,12 +124,12 @@ void tests2Tree()
         assert((filteredTree2.TreeTraversal(LEFT_ROOT_RIGHT))[i] == CorrectFilteredTree2[i]);
     }
     // Merge test
-    BinaryTree<int> tree1(NUMBERS);
+    BinaryTree<int> tree1(KeyFunctionInt);
     tree1.Insert(5);
     tree1.Insert(3);
     tree1.Insert(7);
 
-    BinaryTree<int> tree2(NUMBERS);
+    BinaryTree<int> tree2(KeyFunctionInt);
     tree2.Insert(1);
     tree2.Insert(4);
     tree2.Insert(6);
@@ -142,7 +142,7 @@ void tests2Tree()
 
     // Remove test
 
-    BinaryTree<int> removeTree1(NUMBERS);
+    BinaryTree<int> removeTree1(KeyFunctionInt);
     removeTree1.Insert(1);
     removeTree1.Insert(2);
     removeTree1.Insert(3);
